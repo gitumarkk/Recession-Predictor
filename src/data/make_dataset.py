@@ -16,7 +16,7 @@ import RecessionPredictor_paths as path
 class YahooData:
     """
     Retrieves data from Yahoo Finance.
-    
+
     Original code source: https://stackoverflow.com/questions/44225771/scraping-historical-data-from-yahoo-finance-with-python
     Correct headers: https://stackoverflow.com/questions/68259148/getting-404-error-for-certain-stocks-and-pages-on-yahoo-finance-python
     """
@@ -37,7 +37,7 @@ class YahooData:
         self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
                         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
                         'Accept-Language': 'en-US,en;q=0.5',
-                        'DNT': '1', # Do Not Track Request Header 
+                        'DNT': '1', # Do Not Track Request Header
                         'Connection': 'close'}
 
 
@@ -76,17 +76,17 @@ class DataSeries:
     """
     Contains methods and objects to retrieve data from FRED and Yahoo Finance.
     """
-    
-    
+
+
     def __init__(self):
         self.dates = []
         self.values = []
-        
-        
+
+
     def fred_response(self, params):
         """
         Makes requests to the FRED API.
-        
+
         params: dictionary, FRED API parameters.
         """
         params = dict(params)
@@ -96,12 +96,12 @@ class DataSeries:
         for observation in fred_json:
             self.dates.append(str(observation['date']))
             self.values.append(float(observation['value']))
-         
-            
+
+
     def yahoo_response(self, series_id):
         """
         Retrieves data from Yahoo Finance, and performs timestamp adjustments.
-        
+
         series_id: ticker symbol for the asset to be pulled.
         """
         series_id = str(series_id)
@@ -118,18 +118,18 @@ class DataSeries:
             for index in range(0, len(series_dataframe))])
         self.values.extend([float(series_dataframe['Adj Close'][index])
             for index in range(0, len(series_dataframe))])
-        
-        
+
+
 class MakeDataset:
     """
     The manager class for this module.
     """
 
-    
+
     def __init__(self):
         """
         fred_series_ids: identifiers for FRED data series.
-        
+
         yahoo series_ids: identifiers for Yahoo Finance data series.
         """
         self.fred_series_ids = {'Non-farm_Payrolls': 'PAYEMS',
@@ -147,19 +147,19 @@ class MakeDataset:
         self.shortest_series_length = 1000000
         self.secondary_df_output = pd.DataFrame()
 
-    
+
     def get_fred_data(self):
         """
         Cycles through "fred_series"ids" to get data from the FRED API.
         """
         import time
-        
+
         now = datetime.now()
         month = now.strftime('%m')
-        year = now.year        
+        year = now.year
         most_recent_date = '{}-{}-08'.format(year, month)
         print('\nGetting data from FRED API as of {}...'.format(most_recent_date))
-        
+
         for series_name in list(self.fred_series_ids.keys()):
             series_data = DataSeries()
             series_id = self.fred_series_ids[series_name]
@@ -178,19 +178,19 @@ class MakeDataset:
                     delay = 5
                     print('\t --CONNECTION ERROR--',
                           '\n\t Sleeping for {} seconds.'.format(delay))
-                    time.sleep(delay) 
+                    time.sleep(delay)
                 else:
                     success = True
             self.primary_dictionary_output[series_name] = series_data
         print('Finished getting data from FRED API!')
-    
-    
+
+
     def get_yahoo_data(self):
         """
         Cycles through "yahoo_series"ids" to get data from the Yahoo Finance.
-        """        
+        """
         import time
-        
+
         print('\nGetting data from Yahoo Finance...')
         for series_name in list(self.yahoo_series_ids.keys()):
             series_data = DataSeries()
@@ -209,8 +209,8 @@ class MakeDataset:
                     success = True
             self.primary_dictionary_output[series_name] = series_data
         print('Finished getting data from Yahoo Finance!')
-        
-        
+
+
     def yahoo_data_sp500_fix(self):
         """
         For some reason Yahoo Finance is no longer providing monthly
@@ -223,7 +223,7 @@ class MakeDataset:
         cutoff_date_mask = sp500_precutoff_data.loc[:,'Dates'] < cutoff_date
         self.primary_dictionary_output['S&P_500_Index'].dates.extend(sp500_precutoff_data.loc[cutoff_date_mask, 'Dates'])
         self.primary_dictionary_output['S&P_500_Index'].values.extend(sp500_precutoff_data.loc[cutoff_date_mask, 'S&P_500_Index'])
-        
+
 
     def find_shortest_series(self):
         """
@@ -235,8 +235,8 @@ class MakeDataset:
             if len(series_data.dates) < self.shortest_series_length:
                 self.shortest_series_length = len(series_data.dates)
                 self.shortest_series_name = series_name
-    
-    
+
+
     def combine_primary_data(self):
         """
         Combines primary data into a single dictionary (such that each series
@@ -246,23 +246,23 @@ class MakeDataset:
         print('\nCombining primary dataset...')
         now = datetime.now()
         current_month = int(now.strftime('%m'))
-        current_year = now.year        
-        
+        current_year = now.year
+
         dates = []
         for months_ago in range(0, self.shortest_series_length):
             if current_month < 10:
                 dates.append('{}-0{}-01'.format(current_year, current_month))
             else:
                 dates.append('{}-{}-01'.format(current_year, current_month))
-            
+
             if current_month == 1:
                 current_month = 12
                 current_year -= 1
             else:
                 current_month -= 1
-            
+
         self.primary_df_output['Dates'] = dates
-        
+
         for series_name in self.primary_dictionary_output.keys():
             series_data = self.primary_dictionary_output[series_name]
             self.primary_df_output[series_name] = series_data.values[:self.shortest_series_length]
@@ -277,15 +277,15 @@ class MakeDataset:
         """
         Gets primary data from FRED API and Yahoo Finance.
         """
-        
+
         print('\nGetting primary data from APIs...')
         self.get_fred_data()
         self.get_yahoo_data()
         self.yahoo_data_sp500_fix()
         self.find_shortest_series()
         self.combine_primary_data()
-        
-    
+
+
     def calculate_secondary_data(self):
         """
         Builds some features from the primary dataset to create a secondary
@@ -309,7 +309,7 @@ class MakeDataset:
         sp_500_12mo = []
         IPI_3mo = []
         IPI_12mo = []
-        
+
         for index in range(0, len(self.primary_df_output) - 12):
             dates.append(self.primary_df_output['Dates'][index])
             payrolls_3mo_pct_chg = (self.primary_df_output['Non-farm_Payrolls'][index]
@@ -354,7 +354,7 @@ class MakeDataset:
             IPI_12mo_pct_chg = (self.primary_df_output['IPI'][index]
                 / self.primary_df_output['IPI'][index + 12]) - 1
             IPI_12mo.append(IPI_12mo_pct_chg)
-            
+
         self.secondary_df_output = pd.DataFrame({
                 'Dates': dates,
                 'Payrolls_3mo_pct_chg_annualized': payrolls_3mo,
@@ -374,8 +374,8 @@ class MakeDataset:
                 'S&P_500_12mo_chg': sp_500_12mo,
                 'IPI_3mo_pct_chg_annualized': IPI_3mo,
                 'IPI_12mo_pct_chg': IPI_12mo})
-            
-            
+
+
     def create_secondary_data(self):
         """
         Creates and saves the secondary dataset as a json object.
@@ -389,8 +389,8 @@ class MakeDataset:
         self.secondary_df_output.to_json(path.data_secondary)
         self.secondary_df_output.to_json(path.data_secondary_most_recent)
         print('\nSecondary dataset saved to {}'.format(path.data_secondary_most_recent))
-        
-        
+
+
     def get_all_data(self):
         """
         Gets data from primary sources (FRED and Yahoo Finance), then performs
@@ -409,7 +409,7 @@ class MakeDataset:
 #Board of Governors of the Federal Reserve System (US), 5-Year Treasury Constant Maturity Rate [GS5], retrieved from FRED, Federal Reserve Bank of St. Louis; https://fred.stlouisfed.org/series/GS5
 #Board of Governors of the Federal Reserve System (US), 3-Month Treasury Bill: Secondary Market Rate [TB3MS], retrieved from FRED, Federal Reserve Bank of St. Louis; https://fred.stlouisfed.org/series/TB3MS
 #Board of Governors of the Federal Reserve System (US), Industrial Production Index [INDPRO], retrieved from FRED, Federal Reserve Bank of St. Louis; https://fred.stlouisfed.org/series/INDPRO
-        
+
 #MIT License
 #
 #Copyright (c) 2019 Terrence Zhang
