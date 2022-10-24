@@ -4,57 +4,41 @@ This module contains objects (mainly filepaths) to be used by other modules.
 import os
 import datetime as dt
 
-os.chdir(os.path.dirname(os.path.abspath(__file__)))   
+from pathlib import Path
 
-fred_api_key = ''
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+fred_api_key = 'fadb89baf8c1a1649586e27bf2d99e0f'
 now = dt.datetime.now()
 month = now.strftime('%m')
 year = now.year
-sp500_precutoff_data = (str(os.getcwd()) +
-                        '\\data\\raw\\SP500_pre-cutoff_data.json')
-data_primary = (str(os.getcwd()) +
-                '\\data\\raw\\primary_dataset_v{}_{}_01.json'.format(year, month))
-data_primary_most_recent = (str(os.getcwd()) +
-                            '\\data\\raw\\primary_dataset_most_recent.json')
-data_secondary = (str(os.getcwd()) +
-                  '\\data\\interim\\secondary_dataset_v{}_{}_01.json'.format(year, month))
-data_secondary_most_recent = (str(os.getcwd()) +
-                              '\\data\\interim\\secondary_dataset_most_recent.json')
-data_final = (str(os.getcwd()) + '\\data\\processed\\final_dataset.json')
-exploratory_plots = (str(os.getcwd()) + '\\reports\\figures\\exploratory.pdf')
-test_results_plots = (str(os.getcwd()) + '\\reports\\figures\\test_results.pdf')
-deployment_results_plots = (str(os.getcwd()) + '\\reports\\figures\\deployment_results.pdf')
-cv_results = (str(os.getcwd()) + '\\models\\model_metadata\\cv_results.json')
-cv_metadata = (str(os.getcwd()) + '\\models\\model_metadata\\cv_metadata.json')
-pred_model_metadata = (str(os.getcwd()) +
-                       '\\models\\model_metadata\\pred_metadata.json')
-prediction_errors = (str(os.getcwd()) +
-                     '\\models\\model_metadata\\prediction_errors.json')
-full_predictions = (str(os.getcwd()) +
-                    '\\models\\model_metadata\\full_predictions.json')
-knn_test_results = (str(os.getcwd()) +
-                    '\\models\\testing_data\\knn_test_results.json')
-elastic_net_test_results = (str(os.getcwd()) +
-                            '\\models\\testing_data\\elastic_net_test_results.json')
-naive_bayes_test_results = (str(os.getcwd()) +
-                            '\\models\\testing_data\\naive_bayes_test_results.json')
-svm_test_results = (str(os.getcwd()) +
-                    '\\models\\testing_data\\svm_test_results.json')
-gauss_test_results = (str(os.getcwd()) +
-                      '\\models\\testing_data\\gauss_test_results.json')
-xgboost_test_results = (str(os.getcwd()) +
-                        '\\models\\testing_data\\xgboost_test_results.json')
-weighted_average_test_results = (str(os.getcwd()) +
-                                 '\\models\\testing_data\\weighted_average_test_results.json')
-deployment_cv_results = (str(os.getcwd()) + '\\models\\model_metadata\\deployment_cv_results.json')
-deployment_cv_metadata = (str(os.getcwd()) + '\\models\\model_metadata\\deployment_cv_metadata.json')
-deployment_pred_model_metadata = (str(os.getcwd()) +
-                                  '\\models\\model_metadata\\deployment_pred_metadata.json')
-deployment_full_predictions = (str(os.getcwd()) +
-                               '\\models\\model_metadata\\deployment_full_predictions.json')
-deployment_svm_test_results = (str(os.getcwd()) +
-                               '\\models\\testing_data\\deployment_svm_test_results.json')
-deployment_chart_data = (str(os.getcwd()) + '\\reports\\deployment_chart.csv')
+sp500_precutoff_data = Path('data/raw/SP500_pre-cutoff_data.json')
+data_primary = Path('data/raw/primary_dataset_v{}_{}_01.json'.format(year, month))
+data_primary_most_recent = Path('data/raw/primary_dataset_most_recent.json')
+data_secondary = Path('data/interim/secondary_dataset_v{}_{}_01.json'.format(year, month))
+data_secondary_most_recent = Path('data/interim/secondary_dataset_most_recent.json')
+data_final = Path('data/processed/final_dataset.json')
+exploratory_plots = Path('reports/figures/exploratory.pdf')
+test_results_plots = Path('reports/figures/test_results.pdf')
+deployment_results_plots = Path('reports/figures/deployment_results.pdf')
+cv_results = Path('models/model_metadata/cv_results.json')
+cv_metadata = Path('models/model_metadata/cv_metadata.json')
+pred_model_metadata = Path('models/model_metadata/pred_metadata.json')
+prediction_errors = Path('models/model_metadata/prediction_errors.json')
+full_predictions = Path('models/model_metadata/full_predictions.json')
+knn_test_results = Path('models/testing_data/knn_test_results.json')
+elastic_net_test_results = Path('models/testing_data/elastic_net_test_results.json')
+naive_bayes_test_results = Path('models/testing_data/naive_bayes_test_results.json')
+svm_test_results = Path('models/testing_data/svm_test_results.json')
+gauss_test_results = Path('models/testing_data/gauss_test_results.json')
+xgboost_test_results = Path('models/testing_data/xgboost_test_results.json')
+weighted_average_test_results = Path('models/testing_data/weighted_average_test_results.json')
+deployment_cv_results = Path('models/model_metadata/deployment_cv_results.json')
+deployment_cv_metadata = Path('models/model_metadata/deployment_cv_metadata.json')
+deployment_pred_model_metadata = Path('models/model_metadata/deployment_pred_metadata.json')
+deployment_full_predictions = Path('models/model_metadata/deployment_full_predictions.json')
+deployment_svm_test_results = Path('models/testing_data/deployment_svm_test_results.json')
+deployment_chart_data = Path('reports/deployment_chart.csv')
 
 #MIT License
 #
